@@ -4,12 +4,14 @@ FROM webdevops/php-nginx:8.2
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy the rest of the application
+COPY . .
+
 # Copy composer files and install dependencies
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader
 
-# Copy the rest of the application
-COPY . .
+
 
 # Install npm dependencies and build assets
 RUN npm install && npm run build
