@@ -7,6 +7,8 @@ WORKDIR /var/www/html
 # Copy the rest of the application
 COPY . .
 
+ENV WEB_DOCUMENT_ROOT=/var/www/html/public
+
 # Install system dependencies, Node.js, and npm
 RUN apt-get update && \
     apt-get install -y curl && \
