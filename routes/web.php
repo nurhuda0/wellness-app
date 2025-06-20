@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,16 +20,31 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Admin Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Partner Routes
-Route::get('/partners', [PartnerController::class, 'index'])->name('partners.index');
-Route::get('/partners/{partner}', [PartnerController::class, 'show'])->name('partners.show');
+Route::get('/partners', function () {
+    return view('partners');
+})->middleware(['auth']);
 
-// Booking Routes
-Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
-Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+Route::get('/bookings', function () {
+    return view('bookings');
+})->middleware(['auth']);
+
+Route::post('/lang/{lang}', function ($lang) {
+    if (!in_array($lang, ['en', 'ar'])) {
+        abort(400);
+    }
+    App::setLocale($lang);
+    session(['locale' => $lang, 'rtl' => $lang === 'ar']);
+    return back();
+});
+
+require __DIR__.'/auth.php';

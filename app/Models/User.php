@@ -30,10 +30,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
     public function isAdmin()
     {
         return $this->role === self::ROLE_HR_ADMIN || $this->role === self::ROLE_SUPER_ADMIN;
@@ -68,10 +64,11 @@ class User extends Authenticatable
     {
         $query->when(
             $filters['search'] ?? false,
-            fn ($query, $search) =>
-            $query
-                ->where('name', 'like', '%' . $search . '%')
-                ->orWhere('email', 'like', '%' . $search . '%')
+            function ($query, $search) {
+                $query
+                    ->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            }
         );
     }
 
@@ -79,14 +76,6 @@ class User extends Authenticatable
     {
         return $query->where('role', $role);
     }
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     /**
      * The attributes that should be cast.
