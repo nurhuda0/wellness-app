@@ -7,20 +7,21 @@ WORKDIR /var/www/html
 # Copy the rest of the application
 COPY . .
 
-# Copy composer files and install dependencies
-COPY composer.json composer.lock ./
+# Install system dependencies, Node.js, and npm
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-
-
-# Install npm dependencies and build assets
+# Install JS dependencies and build assets
 RUN npm install && npm run build
 
-# Set permissions for storage and cache
+# Set permissions, etc.
 RUN chown -R application:application /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 8080 (Render expects this)
 EXPOSE 8080
 
-# Start Nginx and PHP-FPM
 CMD ["supervisord", "-n"]
