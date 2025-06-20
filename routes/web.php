@@ -38,6 +38,10 @@ Route::get('/bookings', function () {
     return view('bookings');
 })->middleware(['auth']);
 
+Route::get('/companies/register', function () {
+    return view('companies-register');
+})->name('companies.register');
+
 Route::post('/lang/{lang}', function ($lang) {
     if (!in_array($lang, ['en', 'ar'])) {
         abort(400);
@@ -45,6 +49,35 @@ Route::post('/lang/{lang}', function ($lang) {
     App::setLocale($lang);
     session(['locale' => $lang, 'rtl' => $lang === 'ar']);
     return back();
+});
+
+Route::get('/admin/users', function () {
+    return view('admin.users');
+})->name('admin.users');
+
+Route::get('/admin/companies', function () {
+    return view('admin.companies');
+})->name('admin.companies');
+
+Route::get('/admin/memberships', function () {
+    return view('admin.memberships');
+})->name('admin.memberships');
+
+Route::get('/admin/bookings', function () {
+    return view('admin.bookings');
+})->name('admin.bookings');
+
+Route::get('/admin/partners', function () {
+    return view('admin.partners');
+})->name('admin.partners');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/assign-membership', function () {
+        return view('admin.assign-membership');
+    })->name('admin.assign-membership');
+    Route::get('/admin/assign-role', function () {
+        return view('admin.assign-role');
+    })->name('admin.assign-role');
 });
 
 require __DIR__.'/auth.php';

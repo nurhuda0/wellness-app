@@ -47,6 +47,18 @@
             @endif
         </div>
 
+        <!-- Language Selector -->
+        <div>
+            <x-input-label for="language" :value="__('Language')" />
+            <form method="POST" action="/lang" id="lang-form">
+                @csrf
+                <select id="language" name="language" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" onchange="if(this.value) { document.getElementById('lang-form').action='/lang/'+this.value; document.getElementById('lang-form').submit(); }">
+                    <option value="en" {{ app()->getLocale() === 'en' ? 'selected' : '' }}>English</option>
+                    <option value="ar" {{ app()->getLocale() === 'ar' ? 'selected' : '' }}>العربية</option>
+                </select>
+            </form>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

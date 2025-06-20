@@ -28,9 +28,31 @@
             </ul>
         </div>
     </div>
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-4 mb-4">
         <a href="/partners" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition">{{ __('messages.partners') }}</a>
         <a href="/bookings" class="inline-block px-6 py-3 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">{{ __('messages.bookings') }}</a>
     </div>
+    <div class="mt-2">
+        <a href="/companies/register" class="inline-block px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold shadow hover:bg-gray-800 transition">Register a Company</a>
+    </div>
+    <div class="mt-2">
+        <a href="/admin/users" class="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold shadow hover:bg-indigo-700 transition">User Management</a>
+    </div>
+    <div class="mt-2">
+        <a href="/admin/companies" class="inline-block px-6 py-3 bg-yellow-600 text-white rounded-lg font-semibold shadow hover:bg-yellow-700 transition">Company Management</a>
+    </div>
+    <div class="mt-2">
+        <a href="/admin/memberships" class="inline-block px-6 py-3 bg-pink-600 text-white rounded-lg font-semibold shadow hover:bg-pink-700 transition">Membership Management</a>
+    </div>
+    <div class="mt-2">
+        <a href="/admin/bookings" class="inline-block px-6 py-3 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Booking Management</a>
+    </div>
+    <div class="mt-2">
+        <a href="/admin/partners" class="inline-block px-6 py-3 bg-green-700 text-white rounded-lg font-semibold shadow hover:bg-green-800 transition">Partner Management</a>
+    </div>
+    @if(auth()->user() && auth()->user()->isAdmin())
+        <a href="{{ url('/admin/assign-membership') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 transition mb-2 mr-2">Assign Memberships</a>
+        <a href="{{ url('/admin/assign-role') }}" class="inline-block bg-pink-600 text-white px-4 py-2 rounded shadow hover:bg-pink-700 transition mb-2 mr-2">Assign Roles</a>
+    @endif
 </div>
 @endsection
