@@ -30,9 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/partners', function () {
-    return view('partners');
-})->middleware(['auth']);
+Route::get('/partners', [\App\Http\Controllers\PartnerController::class, 'index'])->name('partners.index');
+Route::get('/partners/{partner}', [\App\Http\Controllers\PartnerController::class, 'show'])->name('partners.show');
 
 Route::get('/bookings', function () {
     return view('bookings');
@@ -79,5 +78,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return view('admin.assign-role');
     })->name('admin.assign-role');
 });
+
+Route::post('/companies/register', [\App\Http\Controllers\CompanyController::class, 'store'])->name('companies.register.store');
 
 require __DIR__.'/auth.php';

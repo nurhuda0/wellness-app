@@ -9,93 +9,102 @@
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <h2 class="text-2xl font-bold text-gray-900">{{ __('Partners Directory') }}</h2>
                     
-                    <div class="flex gap-4">
-                        <!-- Search Input -->
-                        <div class="relative">
-                            <input type="text" id="search" 
-                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="{{ __('Search partners...') }}">
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </div>
-                        </div>
+                    <!-- Filter Form -->
+                    <form method="GET" action="{{ route('partners.index') }}" class="flex gap-4">
+                        <!-- City Filter -->
+                        <select name="city" 
+                                class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">{{ __('All Cities') }}</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                    {{ $city }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Type Filter -->
-                        <select id="typeFilter" 
+                        <select name="type" 
                                 class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">{{ __('All Types') }}</option>
-                            <option value="gym">{{ __('Gym') }}</option>
-                            <option value="spa">{{ __('Spa') }}</option>
-                            <option value="sports">{{ __('Sports Club') }}</option>
-                            <option value="wellness_center">{{ __('Wellness Center') }}</option>
+                            @foreach($types as $key => $type)
+                                <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
                         </select>
-                    </div>
+
+                        <button type="submit" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            {{ __('Filter') }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results Count -->
+                <div class="text-sm text-gray-600">
+                    {{ __('Showing') }} {{ $partners->firstItem() ?? 0 }} - {{ $partners->lastItem() ?? 0 }} 
+                    {{ __('of') }} {{ $partners->total() }} {{ __('partners') }}
                 </div>
 
                 <!-- Partners Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($partners as $partner)
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <div class="flex items-center justify-between">
+                    @forelse($partners as $partner)
+                        <div class="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
+                            <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-lg font-semibold text-gray-900">{{ $partner->name }}</h3>
                                 <span class="px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
-                                    {{ $partner->type }}
+                                    {{ $types[$partner->type] ?? $partner->type }}
                                 </span>
                             </div>
-                            <p class="mt-2 text-gray-600">{{ $partner->description }}</p>
-                            <div class="mt-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex items-center">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        </svg>
-                                        <span class="ml-2 text-gray-600">{{ $partner->city }}</span>
-                                    </div>
+                            
+                            @if($partner->description)
+                                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ $partner->description }}</p>
+                            @endif
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    </svg>
+                                    <span>{{ $partner->city }}</span>
                                 </div>
+                                
+                                @if($partner->phone)
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                        <span>{{ $partner->phone }}</span>
+                                    </div>
+                                @endif
                             </div>
-                            <div class="mt-4">
+                            
+                            <div class="flex gap-2">
                                 <a href="{{ route('partners.show', $partner) }}" 
-                                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                   class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     {{ __('View Details') }}
                                 </a>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-span-full text-center py-12">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">{{ __('No partners found') }}</h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('Try adjusting your filters or search criteria.') }}</p>
+                        </div>
+                    @endforelse
                 </div>
+
+                <!-- Pagination -->
+                @if($partners->hasPages())
+                    <div class="mt-6">
+                        {{ $partners->appends(request()->query())->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-// Client-side filtering
-const partners = document.querySelectorAll('.bg-white');
-const searchInput = document.getElementById('search');
-const typeFilter = document.getElementById('typeFilter');
-
-searchInput.addEventListener('input', filterPartners);
-typeFilter.addEventListener('change', filterPartners);
-
-function filterPartners() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedType = typeFilter.value;
-    
-    partners.forEach(partner => {
-        const name = partner.querySelector('h3').textContent.toLowerCase();
-        const type = partner.querySelector('.bg-green-100').textContent.toLowerCase();
-        const city = partner.querySelector('.text-gray-600:last-child').textContent.toLowerCase();
-        
-        const matchesSearch = name.includes(searchTerm) || 
-                            city.includes(searchTerm) ||
-                            type.includes(searchTerm);
-        const matchesType = selectedType === '' || type === selectedType;
-        
-        partner.style.display = matchesSearch && matchesType ? 'block' : 'none';
-    });
-}
-</script>
-@endpush
 @endsection

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PartnerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,45 +20,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Partner API Routes
-Route::get('/partners', function (Request $request) {
-    $partners = Partner::query()
-        ->when($request->city, function ($query) use ($request) {
-            $query->where('city', $request->city);
-        })
-        ->when($request->type, function ($query) use ($request) {
-            $query->where('type', $request->type);
-        })
-        ->get();
-
-    return response()->json($partners);
-});
+Route::get('/partners', [PartnerController::class, 'apiIndex']);
 
 // Booking API Routes
-Route::post('/booking', function (Request $request) {
-    $validated = $request->validate([
-        'partner_id' => 'required|exists:partners,id',
-        'booking_time' => 'required|date',
-    ]);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/booking', function (Request $request) {
+        // TODO: Implement booking creation
+        return response()->json(['message' => 'Booking endpoint - to be implemented'], 501);
+    });
 
-    Booking::create([
-        'user_id' => auth()->id(),
-        'partner_id' => $validated['partner_id'],
-        'booking_time' => $validated['booking_time'],
-        'status' => 'pending'
-    ]);
+    Route::delete('/booking/{id}', function ($id) {
+        // TODO: Implement booking cancellation
+        return response()->json(['message' => 'Booking cancellation - to be implemented'], 501);
+    });
 
-    return response()->json(['message' => 'Booking created successfully'], 201);
-});
-
-Route::delete('/booking/{id}', function (Booking $booking) {
-    $booking->delete();
-    return response()->json(['message' => 'Booking cancelled successfully']);
-});
-
-Route::get('/my-bookings', function () {
-    return response()->json(
-        auth()->user()->bookings()
-            ->with('partner')
-            ->get()
-    );
+    Route::get('/my-bookings', function () {
+        // TODO: Implement user bookings list
+        return response()->json(['message' => 'My bookings - to be implemented'], 501);
+    });
 });

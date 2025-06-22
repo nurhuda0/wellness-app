@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-bold mb-6">{{ __('messages.welcome') }}, {{ Auth::user()->name }}!</h2>
+    <h2 class="text-2xl font-bold mb-6">{{ __('messages.welcome') }}, {{ Auth::user()?->name ?? 'Guest' }}!</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Membership Plan Card -->
         <div class="bg-blue-50 p-6 rounded-lg shadow">

@@ -4,7 +4,7 @@
 <div class="max-w-md mx-auto py-10">
     <div class="bg-white shadow rounded-lg p-8">
         <h2 class="text-2xl font-bold mb-6 text-center">Register Your Company</h2>
-        <form method="POST" action="#">
+        <form method="POST" action="{{ route('companies.register.store') }}">
             @csrf
             <div class="mb-4">
                 <label for="company_name" class="block text-gray-700 font-semibold mb-2">Company Name</label>
