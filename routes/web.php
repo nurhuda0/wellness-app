@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
@@ -50,33 +51,25 @@ Route::post('/lang/{lang}', function ($lang) {
     return back();
 });
 
-Route::get('/admin/users', function () {
-    return view('admin.users');
-})->name('admin.users');
-
-Route::get('/admin/companies', function () {
-    return view('admin.companies');
-})->name('admin.companies');
-
-Route::get('/admin/memberships', function () {
-    return view('admin.memberships');
-})->name('admin.memberships');
-
-Route::get('/admin/bookings', function () {
-    return view('admin.bookings');
-})->name('admin.bookings');
-
-Route::get('/admin/partners', function () {
-    return view('admin.partners');
-})->name('admin.partners');
-
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/assign-membership', function () {
+// Admin routes using AdminController
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/companies', [AdminController::class, 'companies'])->name('companies');
+    Route::get('/memberships', [AdminController::class, 'memberships'])->name('memberships');
+    Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
+    Route::get('/partners', [AdminController::class, 'partners'])->name('partners');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+    Route::post('/settings', [AdminController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/export', [AdminController::class, 'export'])->name('export');
+    
+    // Legacy routes for backward compatibility
+    Route::get('/assign-membership', function () {
         return view('admin.assign-membership');
-    })->name('admin.assign-membership');
-    Route::get('/admin/assign-role', function () {
+    })->name('assign-membership');
+    Route::get('/assign-role', function () {
         return view('admin.assign-role');
-    })->name('admin.assign-role');
+    })->name('assign-role');
 });
 
 Route::post('/companies/register', [\App\Http\Controllers\CompanyController::class, 'store'])->name('companies.register.store');
