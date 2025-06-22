@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\PartnerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PartnerController;
+use App\Http\Controllers\Api\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,23 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Partner API Routes
-Route::get('/partners', [PartnerController::class, 'apiIndex']);
+// Authentication
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
-// Booking API Routes
+// Partners
+Route::get('/partners', [PartnerController::class, 'index']);
+
+// Bookings (protected)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/booking', function (Request $request) {
-        // TODO: Implement booking creation
-        return response()->json(['message' => 'Booking endpoint - to be implemented'], 501);
-    });
-
-    Route::delete('/booking/{id}', function ($id) {
-        // TODO: Implement booking cancellation
-        return response()->json(['message' => 'Booking cancellation - to be implemented'], 501);
-    });
-
-    Route::get('/my-bookings', function () {
-        // TODO: Implement user bookings list
-        return response()->json(['message' => 'My bookings - to be implemented'], 501);
-    });
+    Route::post('/booking', [BookingController::class, 'store']);
+    Route::delete('/booking/{id}', [BookingController::class, 'destroy']);
+    Route::get('/my-bookings', [BookingController::class, 'myBookings']);
 });

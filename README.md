@@ -1,66 +1,294 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏃‍♂️ Wellness App - Corporate Wellness Booking Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive Laravel-based wellness booking platform that connects employees with wellness partners (gyms, spas, sports clubs) through an intuitive booking system with membership management and admin controls.
 
-## About Laravel
+## ✨ Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🔐 **Module 1: User & Company Registration**
+- Multi-role user system (Employee, HR Admin, Super Admin)
+- Company registration and management
+- Email verification and authentication
+- Profile management with membership status
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🏢 **Module 2: Partner Directory**
+- Complete CRUD operations for wellness partners
+- Advanced search and filtering (by city, type, status)
+- Partner categories: Gym, Sports Club, Spa, Wellness Center
+- Detailed partner profiles with contact information
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📅 **Module 3: Booking System**
+- Interactive calendar integration
+- Real-time availability checking
+- Booking management (create, edit, cancel)
+- Status tracking (Pending, Confirmed, Cancelled, Completed)
+- Time-based cancellation rules
 
-## Learning Laravel
+### 💳 **Module 4: Membership Management**
+- Flexible membership plans with billing cycles
+- Feature-based membership tiers
+- Automatic expiration tracking
+- Monthly booking limits per membership
+- Membership assignment and management
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### ⚙️ **Module 5: Admin Panel**
+- Comprehensive dashboard with analytics
+- User management and role assignment
+- Company and partner management
+- Booking oversight and reporting
+- System settings and configuration
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 📱 **Module 6: API & Mobile Readiness**
+- RESTful API endpoints with Sanctum authentication
+- Mobile-optimized responsive design
+- JSON API responses for mobile apps
+- CORS configuration for cross-platform access
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Quick Start
 
-## Laravel Sponsors
+### Prerequisites
+- PHP 8.1+
+- Composer
+- MySQL/PostgreSQL
+- Node.js & NPM
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd wellness-app
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-## Contributing
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
 
-## Code of Conduct
+5. **Build assets**
+   ```bash
+   npm run build
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **Start the server**
+   ```bash
+   php artisan serve
+   ```
 
-## Security Vulnerabilities
+Visit `http://localhost:8000` to access the application.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🧪 Testing Guide
 
-## License
+### Manual Testing
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### **1. User Authentication**
+- **URL**: `http://localhost:8000/login`
+- **Test Credentials**:
+  - Regular User: `user@test.com` / `password`
+  - Admin User: `admin@test.com` / `password`
+- **Expected**: Successful login with role-based navigation
+
+#### **2. Partner Directory**
+- **URL**: `http://localhost:8000/partners`
+- **Test Steps**:
+  1. Browse partner list
+  2. Test city/type filters
+  3. Click partner for details
+  4. Verify "Book Now" functionality
+- **Expected**: Filtered results and detailed partner pages
+
+#### **3. Booking System**
+- **URL**: `http://localhost:8000/bookings`
+- **Test Steps**:
+  1. Create new booking with partner
+  2. Select date/time from calendar
+  3. Add notes and submit
+  4. Edit existing booking
+  5. Cancel booking (if within time limit)
+- **Expected**: Full booking lifecycle management
+
+#### **4. Calendar View**
+- **URL**: `http://localhost:8000/bookings/calendar`
+- **Test Steps**:
+  1. Navigate through months
+  2. Click on booking dates
+  3. View booking details
+  4. Test responsive design
+- **Expected**: Interactive calendar with booking indicators
+
+#### **5. Admin Panel**
+- **URL**: `http://localhost:8000/admin` (Admin login required)
+- **Test Sections**:
+  - Dashboard analytics
+  - User management
+  - Partner management
+  - Booking oversight
+  - Membership management
+- **Expected**: Full administrative control
+
+### API Testing
+
+#### **Base URL**: `http://localhost:8000/api`
+
+#### **Authentication Endpoints**
+```bash
+# Register
+POST /api/register
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123"
+}
+
+# Login
+POST /api/login
+{
+    "email": "john@example.com",
+    "password": "password123"
+}
+```
+
+#### **Public Endpoints**
+```bash
+# Get partners (with filters)
+GET /api/partners
+GET /api/partners?city=New York&type=gym
+```
+
+#### **Protected Endpoints** (Require Bearer token)
+```bash
+# Create booking
+POST /api/booking
+Authorization: Bearer YOUR_TOKEN
+{
+    "partner_id": 1,
+    "booking_time": "2024-06-25 14:00:00"
+}
+
+# Get user bookings
+GET /api/my-bookings
+Authorization: Bearer YOUR_TOKEN
+
+# Cancel booking
+DELETE /api/booking/1
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Automated Testing
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test suites
+php artisan test --filter=BookingTest
+php artisan test --filter=PartnerDirectoryTest
+```
+
+## 📁 Project Structure
+
+```
+wellness-app/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Api/           # API controllers
+│   │   ├── AdminController.php
+│   │   ├── BookingController.php
+│   │   ├── PartnerController.php
+│   │   └── MembershipController.php
+│   ├── Models/
+│   │   ├── User.php       # Multi-role user model
+│   │   ├── Partner.php    # Wellness partner model
+│   │   ├── Booking.php    # Booking system model
+│   │   ├── Membership.php # Membership plans
+│   │   └── Company.php    # Company registration
+│   └── Http/Middleware/
+│       └── CheckAdmin.php # Admin access control
+├── database/
+│   ├── migrations/        # Database schema
+│   ├── seeders/          # Test data
+│   └── factories/        # Model factories
+├── resources/views/
+│   ├── admin/            # Admin panel views
+│   ├── bookings/         # Booking system views
+│   ├── partners/         # Partner directory views
+│   └── memberships/      # Membership management
+└── routes/
+    ├── api.php           # API endpoints
+    └── web.php           # Web routes
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=wellness_app
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### Key Features Configuration
+- **Booking cancellation window**: 2 hours before booking time
+- **Membership expiration**: Automatic tracking with email notifications
+- **Admin roles**: HR Admin and Super Admin with different permissions
+- **API rate limiting**: Built-in Laravel Sanctum protection
+
+## 🚀 Deployment
+
+### Using Docker
+```bash
+docker build -t wellness-app .
+docker run -p 8000:8000 wellness-app
+```
+
+### Manual Deployment
+1. Set up production environment variables
+2. Run `composer install --optimize-autoloader --no-dev`
+3. Run `npm run build`
+4. Set up web server (Apache/Nginx)
+5. Configure database and run migrations
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: Check the `API_TESTING_GUIDE.md` and `MANUAL_TESTING_GUIDE.md`
+- **Issues**: Create an issue in the repository
+- **Email**: support@wellness-app.com
+
+---
+
+**Built with ❤️ using Laravel, Tailwind CSS, and Alpine.js**
