@@ -1,160 +1,31 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create New Booking') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('bookings.store') }}" id="bookingForm">
-                        @csrf
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Partner Selection -->
-                            <div>
-                                <x-input-label for="partner_id" :value="__('Partner')" />
-                                <select id="partner_id" name="partner_id" required 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">Select a partner</option>
-                                    @foreach($partners as $partner)
-                                        <option value="{{ $partner->id }}" 
-                                                {{ $partner && $partner->id == $partner->id ? 'selected' : '' }}>
-                                            {{ $partner->name }} - {{ $partner->type }} ({{ $partner->city }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('partner_id')" class="mt-2" />
-                            </div>
-
-                            <!-- Date Selection -->
-                            <div>
-                                <x-input-label for="booking_date" :value="__('Date')" />
-                                <input type="date" id="booking_date" name="booking_date" required 
-                                       min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <x-input-error :messages="$errors->get('booking_date')" class="mt-2" />
-                            </div>
-
-                            <!-- Time Slots -->
-                            <div class="md:col-span-2">
-                                <x-input-label :value="__('Available Time Slots')" />
-                                <div id="timeSlots" class="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                                    <p class="text-gray-500 text-sm">Select a partner and date to see available time slots</p>
-                                </div>
-                                <input type="hidden" id="booking_time" name="booking_time" required>
-                                <x-input-error :messages="$errors->get('booking_time')" class="mt-2" />
-                            </div>
-
-                            <!-- Notes -->
-                            <div class="md:col-span-2">
-                                <x-input-label for="notes" :value="__('Notes (Optional)')" />
-                                <textarea id="notes" name="notes" rows="3" 
-                                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                          placeholder="Any special requests or notes for your booking...">{{ old('notes') }}</textarea>
-                                <x-input-error :messages="$errors->get('notes')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end mt-6">
-                            <x-secondary-button type="button" onclick="window.history.back()" class="mr-3">
-                                {{ __('Cancel') }}
-                            </x-secondary-button>
-                            <x-primary-button>
-                                {{ __('Create Booking') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+@if ($errors->any())
+    <div style="color: red;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
+@endif
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const partnerSelect = document.getElementById('partner_id');
-            const dateInput = document.getElementById('booking_date');
-            const timeSlotsContainer = document.getElementById('timeSlots');
-            const bookingTimeInput = document.getElementById('booking_time');
-            const form = document.getElementById('bookingForm');
-
-            function loadTimeSlots() {
-                const partnerId = partnerSelect.value;
-                const date = dateInput.value;
-
-                if (!partnerId || !date) {
-                    timeSlotsContainer.innerHTML = '<p class="text-gray-500 text-sm">Select a partner and date to see available time slots</p>';
-                    return;
-                }
-
-                timeSlotsContainer.innerHTML = '<p class="text-gray-500 text-sm">Loading available slots...</p>';
-
-                fetch(`/bookings/slots/available?partner_id=${partnerId}&date=${date}`)
-                    .then(response => response.json())
-                    .then(slots => {
-                        timeSlotsContainer.innerHTML = '';
-                        
-                        if (slots.length === 0) {
-                            timeSlotsContainer.innerHTML = '<p class="text-red-500 text-sm">No available slots for this date</p>';
-                            return;
-                        }
-
-                        slots.forEach(slot => {
-                            const button = document.createElement('button');
-                            button.type = 'button';
-                            button.className = `p-3 text-sm font-medium rounded-md border transition-colors ${
-                                slot.available 
-                                    ? 'border-gray-300 text-gray-700 hover:bg-gray-50 focus:bg-indigo-50 focus:border-indigo-500 focus:text-indigo-700' 
-                                    : 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
-                            }`;
-                            button.textContent = slot.time;
-                            button.disabled = !slot.available;
-
-                            if (slot.available) {
-                                button.addEventListener('click', function() {
-                                    // Remove active class from all buttons
-                                    document.querySelectorAll('#timeSlots button').forEach(btn => {
-                                        btn.classList.remove('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
-                                        btn.classList.add('border-gray-300', 'text-gray-700');
-                                    });
-
-                                    // Add active class to clicked button
-                                    button.classList.remove('border-gray-300', 'text-gray-700');
-                                    button.classList.add('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
-
-                                    // Set the hidden input value
-                                    bookingTimeInput.value = slot.datetime;
-                                });
-                            }
-
-                            timeSlotsContainer.appendChild(button);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading time slots:', error);
-                        timeSlotsContainer.innerHTML = '<p class="text-red-500 text-sm">Error loading time slots</p>';
-                    });
-            }
-
-            // Event listeners
-            partnerSelect.addEventListener('change', loadTimeSlots);
-            dateInput.addEventListener('change', loadTimeSlots);
-
-            // Form validation
-            form.addEventListener('submit', function(e) {
-                if (!bookingTimeInput.value) {
-                    e.preventDefault();
-                    alert('Please select a time slot');
-                    return false;
-                }
-            });
-
-            // Load time slots if partner is pre-selected
-            if (partnerSelect.value && dateInput.value) {
-                loadTimeSlots();
-            }
-        });
-    </script>
-</x-app-layout>
+<h1>Create New Booking</h1>
+<form method="POST" action="{{ route('bookings.store') }}">
+    @csrf
+    @if(isset($partner))
+        <input type="hidden" name="partner_id" value="{{ old('partner_id', $partner->id) }}">
+    @else
+        <label>Partner:
+            <select name="partner_id" required>
+                <option value="">Select a partner</option>
+                @foreach($partners as $p)
+                    <option value="{{ $p->id }}" {{ old('partner_id') == $p->id ? 'selected' : '' }}>
+                        {{ $p->name }}
+                    </option>
+                @endforeach
+            </select>
+        </label><br>
+    @endif
+    <label>Date & Time: <input type="datetime-local" name="booking_time" value="{{ old('booking_time') }}" required></label><br>
+    <label>Notes: <input type="text" name="notes" value="{{ old('notes') }}"></label><br>
+    <button type="submit">Book</button>
+</form>
