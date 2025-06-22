@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create New Booking') }}
+            {{ __('Edit Booking') }}
         </h2>
     </x-slot>
 
@@ -9,31 +9,35 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('bookings.store') }}" id="bookingForm">
+                    <form method="POST" action="{{ route('bookings.update', $booking) }}" id="bookingForm">
                         @csrf
+                        @method('PUT')
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Partner Selection -->
+                            <!-- Partner Information (Read-only) -->
                             <div>
-                                <x-input-label for="partner_id" :value="__('Partner')" />
-                                <select id="partner_id" name="partner_id" required 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">Select a partner</option>
-                                    @foreach($partners as $partner)
-                                        <option value="{{ $partner->id }}" 
-                                                {{ $partner && $partner->id == $partner->id ? 'selected' : '' }}>
-                                            {{ $partner->name }} - {{ $partner->type }} ({{ $partner->city }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('partner_id')" class="mt-2" />
+                                <x-input-label :value="__('Partner')" />
+                                <div class="mt-1 p-3 bg-gray-50 rounded-md border border-gray-300">
+                                    <p class="text-sm font-medium text-gray-900">{{ $booking->partner->name }}</p>
+                                    <p class="text-sm text-gray-500">{{ ucfirst(str_replace('_', ' ', $booking->partner->type)) }} - {{ $booking->partner->city }}</p>
+                                </div>
                             </div>
 
-                            <!-- Date Selection -->
+                            <!-- Current Booking Time (Read-only) -->
                             <div>
-                                <x-input-label for="booking_date" :value="__('Date')" />
+                                <x-input-label :value="__('Current Booking Time')" />
+                                <div class="mt-1 p-3 bg-gray-50 rounded-md border border-gray-300">
+                                    <p class="text-sm font-medium text-gray-900">{{ $booking->getFormattedBookingTime() }}</p>
+                                    <p class="text-xs text-gray-500">{{ $booking->getTimeUntilBooking() }}</p>
+                                </div>
+                            </div>
+
+                            <!-- New Date Selection -->
+                            <div>
+                                <x-input-label for="booking_date" :value="__('New Date')" />
                                 <input type="date" id="booking_date" name="booking_date" required 
                                        min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                       value="{{ $booking->booking_time->format('Y-m-d') }}"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <x-input-error :messages="$errors->get('booking_date')" class="mt-2" />
                             </div>
@@ -42,9 +46,9 @@
                             <div class="md:col-span-2">
                                 <x-input-label :value="__('Available Time Slots')" />
                                 <div id="timeSlots" class="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                                    <p class="text-gray-500 text-sm">Select a partner and date to see available time slots</p>
+                                    <p class="text-gray-500 text-sm">Select a date to see available time slots</p>
                                 </div>
-                                <input type="hidden" id="booking_time" name="booking_time" required>
+                                <input type="hidden" id="booking_time" name="booking_time" required value="{{ $booking->booking_time->format('Y-m-d H:i:s') }}">
                                 <x-input-error :messages="$errors->get('booking_time')" class="mt-2" />
                             </div>
 
@@ -53,7 +57,7 @@
                                 <x-input-label for="notes" :value="__('Notes (Optional)')" />
                                 <textarea id="notes" name="notes" rows="3" 
                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                          placeholder="Any special requests or notes for your booking...">{{ old('notes') }}</textarea>
+                                          placeholder="Any special requests or notes for your booking...">{{ old('notes', $booking->notes) }}</textarea>
                                 <x-input-error :messages="$errors->get('notes')" class="mt-2" />
                             </div>
                         </div>
@@ -63,7 +67,7 @@
                                 {{ __('Cancel') }}
                             </x-secondary-button>
                             <x-primary-button>
-                                {{ __('Create Booking') }}
+                                {{ __('Update Booking') }}
                             </x-primary-button>
                         </div>
                     </form>
@@ -74,18 +78,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const partnerSelect = document.getElementById('partner_id');
             const dateInput = document.getElementById('booking_date');
             const timeSlotsContainer = document.getElementById('timeSlots');
             const bookingTimeInput = document.getElementById('booking_time');
             const form = document.getElementById('bookingForm');
+            const partnerId = {{ $booking->partner_id }};
 
             function loadTimeSlots() {
-                const partnerId = partnerSelect.value;
                 const date = dateInput.value;
 
-                if (!partnerId || !date) {
-                    timeSlotsContainer.innerHTML = '<p class="text-gray-500 text-sm">Select a partner and date to see available time slots</p>';
+                if (!date) {
+                    timeSlotsContainer.innerHTML = '<p class="text-gray-500 text-sm">Select a date to see available time slots</p>';
                     return;
                 }
 
@@ -111,6 +114,13 @@
                             }`;
                             button.textContent = slot.time;
                             button.disabled = !slot.available;
+
+                            // Check if this is the current booking time
+                            const currentBookingTime = '{{ $booking->booking_time->format("H:i") }}';
+                            if (slot.time === currentBookingTime) {
+                                button.classList.add('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
+                                button.classList.remove('border-gray-300', 'text-gray-700');
+                            }
 
                             if (slot.available) {
                                 button.addEventListener('click', function() {
@@ -139,7 +149,6 @@
             }
 
             // Event listeners
-            partnerSelect.addEventListener('change', loadTimeSlots);
             dateInput.addEventListener('change', loadTimeSlots);
 
             // Form validation
@@ -151,10 +160,8 @@
                 }
             });
 
-            // Load time slots if partner is pre-selected
-            if (partnerSelect.value && dateInput.value) {
-                loadTimeSlots();
-            }
+            // Load time slots on page load
+            loadTimeSlots();
         });
     </script>
-</x-app-layout>
+</x-app-layout> 

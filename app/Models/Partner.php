@@ -41,4 +41,9 @@ class Partner extends Model
             self::TYPE_WELLNESS_CENTER => 'Wellness Center',
         ];
     }
+
+    public function scopeByType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
 }

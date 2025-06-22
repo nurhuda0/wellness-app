@@ -15,12 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <a href="/partners" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                        Partners
-                    </a>
-                    <a href="/bookings" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                        Bookings
-                    </a>
+                    <x-nav-link :href="route('partners.index')" :active="request()->routeIs('partners.*')">
+                        {{ __('Partners') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.*')">
+                        {{ __('Bookings') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -92,6 +92,12 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('partners.index')" :active="request()->routeIs('partners.*')">
+                {{ __('Partners') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.*')">
+                {{ __('Bookings') }}
             </x-responsive-nav-link>
         </div>
 

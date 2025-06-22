@@ -34,7 +34,7 @@ Route::get('/partners', [\App\Http\Controllers\PartnerController::class, 'index'
 Route::get('/partners/{partner}', [\App\Http\Controllers\PartnerController::class, 'show'])->name('partners.show');
 
 Route::get('/bookings', function () {
-    return view('bookings');
+    return redirect()->route('bookings.index');
 })->middleware(['auth']);
 
 Route::get('/companies/register', function () {
@@ -80,5 +80,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::post('/companies/register', [\App\Http\Controllers\CompanyController::class, 'store'])->name('companies.register.store');
+
+// Booking routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('bookings', \App\Http\Controllers\BookingController::class);
+    Route::get('/bookings/calendar', [\App\Http\Controllers\BookingController::class, 'calendar'])->name('bookings.calendar');
+    Route::get('/bookings/slots/available', [\App\Http\Controllers\BookingController::class, 'getAvailableSlots'])->name('bookings.slots.available');
+});
+
+// API routes for bookings
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/api/bookings', [\App\Http\Controllers\BookingController::class, 'apiIndex'])->name('api.bookings.index');
+    Route::post('/api/bookings', [\App\Http\Controllers\BookingController::class, 'apiStore'])->name('api.bookings.store');
+});
 
 require __DIR__.'/auth.php';

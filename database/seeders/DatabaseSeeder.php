@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CompanySeeder::class,
             PartnerSeeder::class,
+            BookingSeeder::class,
         ]);
     }
     // \App\Models\User::factory()->create([
